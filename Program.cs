@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading;
 
 class Program
 {
@@ -9,11 +10,14 @@ class Program
     udpReceiver.onReceived += (sender, data) =>
     {
       var receivedMessage = Encoding.UTF8.GetString(data);
-      Console.WriteLine(receivedMessage);
-      udpReceiver.send(Encoding.UTF8.GetBytes($"from receiver: {DateTime.Now}"));
+      Console.WriteLine(receivedMessage);            
+      if(receivedMessage == "stop")
+        udpReceiver.stop();
+      udpReceiver.send(Encoding.UTF8.GetBytes($"from receiver: {DateTime.Now}"));     
     };
+    
     udpReceiver.start(7777);
-
+    Console.WriteLine("start listening...");   
     Console.ReadLine();
   }
 }
