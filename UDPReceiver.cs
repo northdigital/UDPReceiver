@@ -28,7 +28,7 @@ public class UDPReceiver
   public async Task startAsync(int port)
   {
     var udpClient = new UdpClient(port);
-    var ipEndPointAny = new IPEndPoint(IPAddress.Any, 0);
+    var endPointAny = new IPEndPoint(IPAddress.Any, 0);
 
     var token = tokenSource.Token;
 
@@ -44,8 +44,8 @@ public class UDPReceiver
 
           if (udpClient.Available > 0)
           {
-            var data = udpClient.Receive(ref ipEndPointAny);
-            onReceived?.Invoke(this, new UDPReceiverEventArgs(udpClient, ipEndPointAny, data));
+            var data = udpClient.Receive(ref endPointAny);
+            onReceived?.Invoke(this, new UDPReceiverEventArgs(udpClient, endPointAny, data));
           }
 
           Thread.Sleep(1000);
