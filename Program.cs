@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 class Program
 {
+  const int PORT = 7777;
+
   static async Task Main(string[] args)
   {
     var udpReceiver = new UDPReceiver();
@@ -24,7 +26,7 @@ class Program
     };
     
     Console.WriteLine("start listening...");   
-    await udpReceiver.startAsync(7777);
+    await udpReceiver.startAsync(PORT);
     Console.WriteLine("good bye!");
   }
 }
