@@ -21,6 +21,7 @@ public class UDPReceiverEventArgs : EventArgs
 public class UDPReceiver
 {
   public event EventHandler<UDPReceiverEventArgs> onReceived;
+  public event EventHandler onTick;
 
   private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
@@ -37,7 +38,7 @@ public class UDPReceiver
       {
         while (true)
         {
-          Console.WriteLine(".");
+          onTick?.Invoke(this, EventArgs.Empty);
           if (token.IsCancellationRequested)
             token.ThrowIfCancellationRequested();
 
@@ -50,10 +51,7 @@ public class UDPReceiver
           Thread.Sleep(1000);
         }
       }
-      catch(OperationCanceledException)
-      {
-        Console.WriteLine("good bye!");
-      }
+      catch(OperationCanceledException) {}
       finally
       {
         tokenSource.Dispose();

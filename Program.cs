@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 class Program
@@ -10,17 +8,23 @@ class Program
   {
     var udpReceiver = new UDPReceiver();
 
-    udpReceiver.onReceived += (sender, e) =>
+    udpReceiver.onTick += (s, e) =>
     {
-      var receivedMessage = Encoding.UTF8.GetString(e.data);
-      Console.WriteLine(receivedMessage);            
-      if(receivedMessage == "stop")
+      Console.WriteLine(".");
+    };
+
+    udpReceiver.onReceived += (s, e) =>
+    {
+      var message = Encoding.UTF8.GetString(e.data);
+      Console.WriteLine($"{e.ipEndPoint.Address} {message}");            
+      if(message == "stop")
         udpReceiver.stop();
-      var response = Encoding.UTF8.GetBytes($"from receiver: {DateTime.Now}");  
+      var response = Encoding.UTF8.GetBytes($"{DateTime.Now}");  
       e.udpClient.Send(response, response.Length, e.ipEndPoint);     
     };
     
     Console.WriteLine("start listening...");   
     await udpReceiver.startAsync(7777);
+    Console.WriteLine("good bye!");
   }
 }
