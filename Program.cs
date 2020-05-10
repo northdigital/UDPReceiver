@@ -15,17 +15,34 @@ class Program
       Console.WriteLine(".");
     };
 
-    udpReceiver.onReceived += (s, e) =>
+    udpReceiver.onReceived += async (s, e) =>
     {
-      var message = Encoding.UTF8.GetString(e.data);
-      Console.WriteLine($"{e.ipEndPoint.Address} {message}");            
-      if(message == "stop")
-        udpReceiver.stop();
-      var response = Encoding.UTF8.GetBytes($"{DateTime.Now}");  
-      e.udpClient.Send(response, response.Length, e.ipEndPoint);     
+      try
+      {
+        var message = Encoding.UTF8.GetString(e.data);
+        Console.WriteLine($"{e.ipEndPoint.Address} {message}");
+        if (message == "ping")
+        {
+          var response = Encoding.UTF8.GetBytes("pong");
+          e.udpClient.Send(response, response.Length, e.ipEndPoint);
+        }
+        else if (message == "stop")
+        {
+          udpReceiver.stop();                  
+        }
+        else
+        {
+          var response = Encoding.UTF8.GetBytes(DateTime.Now.ToString());
+          e.udpClient.Send(response, response.Length, e.ipEndPoint);
+        }
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine(ex.Message);        
+      }
     };
-    
-    Console.WriteLine("start listening...");   
+
+    Console.WriteLine("start listening...");
     await udpReceiver.startAsync(PORT);
     Console.WriteLine("good bye!");
   }

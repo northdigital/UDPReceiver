@@ -38,20 +38,27 @@ public class UDPReceiver
       {
         while (true)
         {
-          onTick?.Invoke(this, EventArgs.Empty);
-          if (token.IsCancellationRequested)
-            token.ThrowIfCancellationRequested();
-
-          if (udpClient.Available > 0)
+          try
           {
-            var data = udpClient.Receive(ref endPointAny);
-            onReceived?.Invoke(this, new UDPReceiverEventArgs(udpClient, endPointAny, data));
-          }
+            onTick?.Invoke(this, EventArgs.Empty);
+            if (token.IsCancellationRequested)
+              token.ThrowIfCancellationRequested();
 
-          Thread.Sleep(1000);
+            if (udpClient.Available > 0)
+            {
+              var data = udpClient.Receive(ref endPointAny);
+              onReceived?.Invoke(this, new UDPReceiverEventArgs(udpClient, endPointAny, data));
+            }
+
+            Thread.Sleep(1000);
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine(ex.Message);
+          }
         }
       }
-      catch(OperationCanceledException) {}
+      catch (OperationCanceledException) { }
       finally
       {
         tokenSource.Dispose();
